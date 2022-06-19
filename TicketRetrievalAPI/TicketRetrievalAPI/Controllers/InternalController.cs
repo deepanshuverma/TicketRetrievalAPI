@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TicketRetrievalAPI.Abstractions.Exceptions;
 using TicketRetrievalAPI.Abstractions.Models;
 using TicketRetrievalAPI.DataAccessLayer;
 
@@ -32,20 +33,29 @@ namespace TicketRetrievalAPI.Controllers
         [Route("/InValidateTicket")]
         public async Task<InValidateTicketResponse> InValidateTicket(ValidateTicketRequest request)
         {
-            var response = new InValidateTicketResponse();
-            var searchResult = await _context.Tickets.SingleOrDefaultAsync(i => i.Id == request.Id);
-            if (searchResult != null)
+            try
             {
-                searchResult.IsValid = false;
-                await _context.SaveChangesAsync();
-                response.IsSuccess = true;
-            } else
+                var response = new InValidateTicketResponse();
+                var searchResult = await _context.Tickets.SingleOrDefaultAsync(i => i.Id == Guid.Parse(request.Id));
+                if (searchResult != null)
+                {
+                    searchResult.IsValid = false;
+                    await _context.SaveChangesAsync();
+                    response.IsSuccess = true;
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Error = $"{request.Id} is Invalid";
+                    throw new KeyNotFoundException(response.Error);
+                }
+
+                return response;
+            } catch (Exception e)
             {
-                response.IsSuccess = false;
-                response.Error = $"{request.Id} is Invalid";
+                throw new TicketingExceptions("Invalid guid is passed");
             }
             
-            return response;
         }
 
     }

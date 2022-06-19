@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TicketRetrievalAPI.DataAccessLayer;
+using TicketRetrievalAPI.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+app.UseMiddleware<ErrorHandlerMiddleware>();
 
 app.MapControllers();
 

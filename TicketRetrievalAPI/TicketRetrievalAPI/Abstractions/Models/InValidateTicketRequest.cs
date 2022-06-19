@@ -2,6 +2,6 @@
 {
     public class InValidateTicketRequest
     {
-        public Guid TicketId { get; set; }
+        public Guid TicketId { get; set; } = Guid.Empty;
     }
 }
