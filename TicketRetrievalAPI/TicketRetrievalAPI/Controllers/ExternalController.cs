@@ -46,10 +46,12 @@ namespace TicketRetrievalAPI.Controllers
         public async Task<ValidateTicketResponse> ValidateTicket(ValidateTicketRequest request)
         {
             var response = new ValidateTicketResponse();
-            if (await TicketsExists(request.Id))
+            var searchResult = await _context.Tickets.SingleOrDefaultAsync(i => i.Id == request.Id);
+            if (searchResult != null)
             {
-                response.IsValid = true;
+                response.IsValid = searchResult.IsValid;
             }
+            
             return response;
         }
 
